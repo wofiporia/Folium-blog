@@ -102,7 +102,7 @@ async function loadBlogs() {
 }
 
 onMounted(() => {
-  if (localStorage.getItem('admin_login') !== '1') {
+  if (!localStorage.getItem('token')) {
     router.push('/admin')
   } else {
     loadBlogs()
@@ -168,7 +168,7 @@ async function confirmDelete() {
 }
 
 function logout() {
-  localStorage.removeItem('admin_login')
+  localStorage.removeItem('token')
   router.push('/admin')
 }
 function goHome() {

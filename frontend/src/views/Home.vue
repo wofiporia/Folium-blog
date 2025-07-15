@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <header>
+      <button class="admin-btn" @click="goAdmin">管理员入口</button>
       <h1>Wofiporia 的博客</h1>
       <p class="subtitle">一个极简的个人博客</p>
     </header>
@@ -47,6 +48,10 @@ function getSummary(content) {
   const lines = content.split('\n').filter(line => line.trim() && !line.trim().startsWith('#'))
   return lines.length ? lines[0].slice(0, 60) + (lines[0].length > 60 ? '...' : '') : ''
 }
+
+function goAdmin() {
+  router.push('/admin')
+}
 </script>
 
 <style scoped>
@@ -61,6 +66,7 @@ header {
   text-align: center;
   margin-top: 0;
   margin-bottom: 32px;
+  position: relative;
 }
 .subtitle {
   color: #888;
@@ -97,5 +103,27 @@ header {
 .date {
   font-size: 0.9em;
   color: #aaa;
+}
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+.admin-btn {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  background: #eee;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+.admin-btn:hover {
+  background: #f8faff;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
+  transform: translateY(-2px) scale(1.01);
 }
 </style> 

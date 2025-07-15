@@ -19,12 +19,16 @@ const router = createRouter({
 
 // 路由守卫：保护 /admin/panel，未登录跳转到 /admin
 router.beforeEach((to, from, next) => {
+  const hasToken = !!localStorage.getItem('token')
   if (to.path === '/admin/panel') {
-    if (localStorage.getItem('admin_login') === '1') {
+    if (hasToken) {
       next()
     } else {
       next('/admin')
     }
+  } else if (to.path === '/admin' && hasToken) {
+    // 已登录还访问登录页，自动跳后台
+    next('/admin/panel')
   } else {
     next()
   }

@@ -13,28 +13,40 @@
       <button type="submit">登录</button>
       <div v-if="error" class="error">{{ error }}</div>
     </form>
+    <button class="back-home" @click="goHome">返回主界面</button>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const username = ref('')
 const password = ref('')
 const error = ref('')
 const router = useRouter()
 
-const ADMIN_USER = 'admin'
-const ADMIN_PASS = '123456'
-
-function handleLogin() {
-  if (username.value === ADMIN_USER && password.value === ADMIN_PASS) {
-    localStorage.setItem('admin_login', '1')
-    router.push('/admin/panel')
-  } else {
-    error.value = '账号或密码错误'
+async function handleLogin() {
+  error.value = ''
+  try {
+    const res = await axios.post('/api/admin/login', {
+      username: username.value,
+      password: password.value
+    })
+    if (res.data.success) {
+      localStorage.setItem('token', res.data.token)
+      router.push('/admin/panel')
+    } else {
+      error.value = res.data.message || '账号或密码错误'
+    }
+  } catch (e) {
+    error.value = '登录失败，请检查网络或服务器！'
   }
+}
+
+function goHome() {
+  router.push('/')
 }
 </script>
 
@@ -84,5 +96,19 @@ button[type="submit"]:hover {
 .error {
   color: #e74c3c;
   margin-top: 12px;
+}
+.back-home {
+  margin-top: 18px;
+  background: #eee;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+.back-home:hover {
+  background: #f8faff;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
+  transform: translateY(-2px) scale(1.01);
 }
 </style> 
