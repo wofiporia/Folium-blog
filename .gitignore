@@ -1,0 +1,15 @@
+# Node/Vue 相关
+node_modules/
+dist/
+
+# Java/Maven 相关
+target/
+*.log
+
+# IDE 配置
+.idea/
+.vscode/
+.DS_Store
+
+# 其他
+.env 
