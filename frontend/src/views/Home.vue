@@ -1,6 +1,11 @@
 <template>
   <div class="container">
     <header>
+      <a class="github-link" href="https://github.com/wofiporia" target="_blank" title="GitHub主页">
+        <svg class="github-icon" viewBox="0 0 1024 1024" width="32" height="32" fill="currentColor">
+          <path d="M512 76C273.6 76 76 273.6 76 512c0 192.8 125.2 356.4 298.8 414.2 21.8 4 29.8-9.4 29.8-20.8 0-10.2-0.4-44.2-0.6-80.2-121.6 26.4-147.4-51.6-147.4-51.6-19.8-50.2-48.4-63.6-48.4-63.6-39.6-27 3-26.4 3-26.4 43.8 3.2 66.8 45 66.8 45 38.8 66.6 101.8 47.4 126.6 36.2 3.8-28 15.2-47.4 27.6-58.4-97-11-199-48.4-199-215.6 0-47.6 17-86.6 44.8-117.2-4.4-11-19.4-55.2 4.2-115 0 0 36.6-11.8 120 44.8 34.8-9.6 72.2-14.4 109.4-14.6 37.2 0.2 74.6 5 109.4 14.6 83.2-56.6 119.8-44.8 119.8-44.8 23.6 59.8 8.6 104 4.2 115 27.8 30.6 44.8 69.6 44.8 117.2 0 167.6-102.2 204.4-199.6 215.2 15.6 13.4 29.4 39.8 29.4 80.2 0 57.8-0.6 104.4-0.6 118.6 0 11.6 8 24.8 30 20.6C822.8 868.2 948 704.8 948 512 948 273.6 750.4 76 512 76z" />
+        </svg>
+      </a>
       <button class="admin-btn" @click="goAdmin">管理员入口</button>
       <h1>Wofiporia 的博客</h1>
       <p class="subtitle">一个极简的个人博客</p>
@@ -125,5 +130,21 @@ header {
   background: #f8faff;
   box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
   transform: translateY(-2px) scale(1.01);
+}
+.github-link {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  z-index: 10;
+  color: #222;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+.github-link:hover {
+  opacity: 1;
+  color: #646cff;
+}
+.github-icon {
+  display: block;
 }
 </style> 
