@@ -5,7 +5,8 @@
       创建：{{ blogUploadDate }}<br>
       更新：{{ blogUpdateDate }}
     </div>
-    <div class="content" v-html="htmlContent"></div>
+    <div v-if="loading" class="content" style="text-align:center;color:#aaa;">加载中...</div>
+    <div v-else class="content" v-html="htmlContent"></div>
   </div>
 </template>
 
@@ -23,14 +24,17 @@ const blogContent = ref('')
 const blogTitle = ref('')
 const blogUploadDate = ref('')
 const blogUpdateDate = ref('')
+const loading = ref(true)
 
 onMounted(async () => {
+  loading.value = true
   const res = await getBlog(blogId)
   const blog = res.data
   blogContent.value = blog.content
   blogTitle.value = blog.title
   blogUploadDate.value = blog.uploadDate ? blog.uploadDate.replace('T', ' ').slice(0, 19) : ''
   blogUpdateDate.value = blog.updateDate ? blog.updateDate.replace('T', ' ').slice(0, 19) : ''
+  loading.value = false
 })
 
 const htmlContent = computed(() => marked.parse(blogContent.value))

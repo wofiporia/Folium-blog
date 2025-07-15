@@ -17,4 +17,17 @@ const router = createRouter({
   routes
 })
 
+// 路由守卫：保护 /admin/panel，未登录跳转到 /admin
+router.beforeEach((to, from, next) => {
+  if (to.path === '/admin/panel') {
+    if (localStorage.getItem('admin_login') === '1') {
+      next()
+    } else {
+      next('/admin')
+    }
+  } else {
+    next()
+  }
+})
+
 export default router 
