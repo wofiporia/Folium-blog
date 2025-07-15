@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -26,6 +26,10 @@ const username = ref('')
 const password = ref('')
 const error = ref('')
 const router = useRouter()
+
+onMounted(() => {
+  document.title = 'Folium-茯苓的博客园 - 登录'
+})
 
 async function handleLogin() {
   error.value = ''

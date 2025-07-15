@@ -7,7 +7,7 @@
         </svg>
       </a>
       <button class="admin-btn" @click="goAdmin">管理员入口</button>
-      <h1>Wofiporia 的博客</h1>
+      <h1>Folium-茯苓的博客园</h1>
       <p class="subtitle">一个极简的个人博客</p>
     </header>
     <main>
@@ -37,6 +37,7 @@ const loading = ref(true)
 const router = useRouter()
 
 onMounted(async () => {
+  document.title = 'Folium-茯苓的博客园'
   loading.value = true
   const res = await getAllBlogs()
   blogs.value = res.data

@@ -35,6 +35,7 @@ onMounted(async () => {
   blogUploadDate.value = blog.uploadDate ? blog.uploadDate.replace('T', ' ').slice(0, 19) : ''
   blogUpdateDate.value = blog.updateDate ? blog.updateDate.replace('T', ' ').slice(0, 19) : ''
   loading.value = false
+  document.title = blogTitle.value ? `Folium-茯苓的博客园 - ${blogTitle.value}` : 'Folium-茯苓的博客园'
 })
 
 const htmlContent = computed(() => marked.parse(blogContent.value))

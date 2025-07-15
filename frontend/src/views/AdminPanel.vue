@@ -102,6 +102,7 @@ async function loadBlogs() {
 }
 
 onMounted(() => {
+  document.title = 'Folium-茯苓的博客园 - 控制台'
   if (!localStorage.getItem('token')) {
     router.push('/admin')
   } else {
