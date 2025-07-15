@@ -17,6 +17,10 @@
         <input type="file" accept=".md" @change="handleFileUpload" />
       </div>
       <div class="edit-section">
+        <label>标题：</label>
+        <input v-model="uploadTitle" placeholder="请输入标题" />
+      </div>
+      <div class="edit-section">
         <label>编辑/粘贴 Markdown 内容：</label>
         <textarea v-model="markdownContent" rows="12" placeholder="在这里编辑或粘贴 markdown 内容"></textarea>
       </div>
@@ -30,19 +34,24 @@
     <div v-else>
       <div v-for="(blogs, tag) in groupedBlogs" :key="tag" class="tag-group">
         <h3>{{ tag }}</h3>
-        <ul class="blog-list">
+        <ul class="blog-list" v-if="Array.isArray(blogs) && blogs.length > 0">
           <li v-for="blog in blogs" :key="blog.id" class="blog-item">
             <span class="blog-title">{{ blog.title }}</span>
-            <span class="blog-date">{{ blog.date }}</span>
+            <span class="blog-date">
+              创建：{{ blog.uploadDate ? blog.uploadDate.replace('T', ' ').slice(0, 19) : '' }}<br>
+              更新：{{ blog.updateDate ? blog.updateDate.replace('T', ' ').slice(0, 19) : '' }}
+            </span>
             <button class="edit-btn" @click="editBlog(blog)">修改</button>
-            <button class="delete-btn" @click="deleteBlog(blog)">删除</button>
+            <button class="delete-btn" @click="deleteBlogConfirm(blog)">删除</button>
           </li>
         </ul>
+        <div v-else class="blog-item" style="text-align:center;color:#aaa;">暂无博客</div>
       </div>
       <!-- 编辑弹窗 -->
       <div v-if="showEditModal" class="modal-mask">
         <div class="modal-box">
           <h4>编辑博客</h4>
+          <input v-model="editTitle" style="width:100%;margin-bottom:10px;" placeholder="标题" />
           <textarea v-model="editContent" rows="10" style="width:100%"></textarea>
           <div class="modal-actions">
             <button @click="saveEdit">保存</button>
@@ -68,31 +77,15 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { marked } from 'marked'
+import { getAllBlogs, addBlog, updateBlog, deleteBlog } from '../api/blog'
 
 const router = useRouter()
 const activeTab = ref('upload')
 const markdownContent = ref('')
+const uploadTitle = ref('')
 const uploadMsg = ref('')
-
+const blogList = ref([])
 const htmlContent = computed(() => marked.parse(markdownContent.value))
-
-// 假数据博客列表
-const blogList = ref([
-  { id: 1, title: '第一篇博客', date: '2024-06-01', tags: ['前端', '生活'], content: '内容1' },
-  { id: 2, title: '第二篇博客', date: '2024-06-02', tags: ['后端'], content: '内容2' },
-  { id: 3, title: '第三篇博客', date: '2024-06-03', tags: ['前端'], content: '内容3' },
-])
-
-const groupedBlogs = computed(() => {
-  const groups = {}
-  blogList.value.forEach(blog => {
-    blog.tags.forEach(tag => {
-      if (!groups[tag]) groups[tag] = []
-      groups[tag].push(blog)
-    })
-  })
-  return groups
-})
 
 // 编辑与删除弹窗逻辑
 const showEditModal = ref(false)
@@ -100,30 +93,24 @@ const showDeleteModal = ref(false)
 const editContent = ref('')
 let editingBlog = null
 let deletingBlog = null
+const editTitle = ref('')
 
-function editBlog(blog) {
-  editingBlog = blog
-  editContent.value = blog.content
-  showEditModal.value = true
-}
-function saveEdit() {
-  if (editingBlog) {
-    editingBlog.content = editContent.value
-    showEditModal.value = false
-  }
-}
-function deleteBlog(blog) {
-  deletingBlog = blog
-  showDeleteModal.value = true
-}
-function confirmDelete() {
-  if (deletingBlog) {
-    blogList.value = blogList.value.filter(b => b !== deletingBlog)
-    showDeleteModal.value = false
-  }
+// 加载博客列表
+async function loadBlogs() {
+  const res = await getAllBlogs()
+  blogList.value = res.data
 }
 
-function handleFileUpload(e) {
+onMounted(() => {
+  if (localStorage.getItem('admin_login') !== '1') {
+    router.push('/admin')
+  } else {
+    loadBlogs()
+  }
+})
+
+// 上传Tab
+async function handleFileUpload(e) {
   const file = e.target.files[0]
   if (file && file.name.endsWith('.md')) {
     const reader = new FileReader()
@@ -136,27 +123,62 @@ function handleFileUpload(e) {
   }
 }
 
-function confirmUpload() {
+async function confirmUpload() {
   if (!markdownContent.value.trim()) {
     uploadMsg.value = '内容不能为空！'
     return
   }
-  uploadMsg.value = '上传成功！（此处为模拟，实际应调用后端接口）'
+  let title = uploadTitle.value.trim()
+  if (!title) {
+    // 自动提取
+    const titleMatch = markdownContent.value.match(/^#\s+(.+)$/m)
+    title = titleMatch ? titleMatch[1] : '未命名博客'
+  }
+  await addBlog(title, markdownContent.value)
+  uploadMsg.value = '上传成功！'
+  markdownContent.value = ''
+  uploadTitle.value = ''
+  loadBlogs()
+}
+
+// 管理Tab
+function editBlog(blog) {
+  editingBlog = blog
+  editTitle.value = blog.title
+  editContent.value = blog.content
+  showEditModal.value = true
+}
+async function saveEdit() {
+  if (editingBlog) {
+    await updateBlog(editingBlog.id, editTitle.value, editContent.value)
+    showEditModal.value = false
+    loadBlogs()
+  }
+}
+function deleteBlogConfirm(blog) {
+  deletingBlog = blog
+  showDeleteModal.value = true
+}
+async function confirmDelete() {
+  if (deletingBlog) {
+    await deleteBlog(deletingBlog.id)
+    showDeleteModal.value = false
+    loadBlogs()
+  }
 }
 
 function logout() {
   localStorage.removeItem('admin_login')
   router.push('/admin')
 }
-
 function goHome() {
   router.push('/')
 }
 
-onMounted(() => {
-  if (localStorage.getItem('admin_login') !== '1') {
-    router.push('/admin')
-  }
+// 标签分组（可选，按需实现）
+const groupedBlogs = computed(() => {
+  // 这里只做全部分组，如需按标签分组可扩展
+  return { '全部博客': blogList.value }
 })
 </script>
 

@@ -5,13 +5,18 @@
       <p class="subtitle">一个极简的个人博客</p>
     </header>
     <main>
-      <ul class="blog-list">
+      <ul class="blog-list" v-if="!loading && Array.isArray(blogs) && blogs.length > 0">
         <li v-for="blog in blogs" :key="blog.id" @click="goToDetail(blog.id)" class="blog-card">
           <h2>{{ blog.title }}</h2>
-          <p class="summary">{{ blog.summary }}</p>
-          <span class="date">{{ blog.date }}</span>
+          <p class="summary">{{ getSummary(blog.content) }}</p>
+          <span class="date">
+            创建：{{ blog.uploadDate ? blog.uploadDate.replace('T', ' ').slice(0, 19) : '' }}<br>
+            更新：{{ blog.updateDate ? blog.updateDate.replace('T', ' ').slice(0, 19) : '' }}
+          </span>
         </li>
       </ul>
+      <div v-else-if="loading" class="blog-card" style="text-align:center;color:#aaa;">加载中...</div>
+      <div v-else class="blog-card" style="text-align:center;color:#aaa;">暂无博客</div>
     </main>
   </div>
 </template>
@@ -19,33 +24,28 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
-const modules = import.meta.glob('../blog-md/*.md', { as: 'raw' })
+import { getAllBlogs } from '../api/blog'
 
 const blogs = ref([])
+const loading = ref(true)
 const router = useRouter()
 
 onMounted(async () => {
-  const blogList = []
-  let idx = 1
-  for (const path in modules) {
-    const content = await modules[path]()
-    const titleMatch = content.match(/^#\s+(.+)$/m)
-    const dateMatch = content.match(/\*日期：([\d\-]+)\*/)
-    const summaryMatch = content.match(/^[^#>\-\*\d\s][^\n]{5,}/m)
-    blogList.push({
-      id: path.split('/').pop().replace('.md', '') || String(idx),
-      title: titleMatch ? titleMatch[1] : `未命名博客${idx}`,
-      summary: summaryMatch ? summaryMatch[0].slice(0, 40) + '...' : '暂无摘要',
-      date: dateMatch ? dateMatch[1] : ''
-    })
-    idx++
-  }
-  blogs.value = blogList.sort((a, b) => a.id.localeCompare(b.id))
+  loading.value = true
+  const res = await getAllBlogs()
+  blogs.value = res.data
+  loading.value = false
 })
 
 function goToDetail(id) {
   router.push(`/blog/${id}`)
+}
+
+function getSummary(content) {
+  if (!content) return ''
+  // 取正文第一段（去掉markdown标题和空行）
+  const lines = content.split('\n').filter(line => line.trim() && !line.trim().startsWith('#'))
+  return lines.length ? lines[0].slice(0, 60) + (lines[0].length > 60 ? '...' : '') : ''
 }
 </script>
 

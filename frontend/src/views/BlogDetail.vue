@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <button class="back" @click="goBack">返回</button>
-    <div class="date">{{ blogDate }}</div>
+    <div class="date">
+      创建：{{ blogUploadDate }}<br>
+      更新：{{ blogUpdateDate }}
+    </div>
     <div class="content" v-html="htmlContent"></div>
   </div>
 </template>
@@ -10,29 +13,24 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { marked } from 'marked'
+import { getBlog } from '../api/blog'
 
 const route = useRoute()
 const router = useRouter()
 
 const blogId = route.params.id
-const modules = import.meta.glob('../blog-md/*.md', { as: 'raw' })
-
 const blogContent = ref('')
 const blogTitle = ref('')
-const blogDate = ref('')
+const blogUploadDate = ref('')
+const blogUpdateDate = ref('')
 
 onMounted(async () => {
-  for (const path in modules) {
-    if (path.includes(`${blogId}.md`)) {
-      const content = await modules[path]()
-      blogContent.value = content
-      const titleMatch = content.match(/^#\s+(.+)$/m)
-      const dateMatch = content.match(/\*日期：([\d\-]+)\*/)
-      blogTitle.value = titleMatch ? titleMatch[1] : '未命名博客'
-      blogDate.value = dateMatch ? dateMatch[1] : ''
-      break
-    }
-  }
+  const res = await getBlog(blogId)
+  const blog = res.data
+  blogContent.value = blog.content
+  blogTitle.value = blog.title
+  blogUploadDate.value = blog.uploadDate ? blog.uploadDate.replace('T', ' ').slice(0, 19) : ''
+  blogUpdateDate.value = blog.updateDate ? blog.updateDate.replace('T', ' ').slice(0, 19) : ''
 })
 
 const htmlContent = computed(() => marked.parse(blogContent.value))
