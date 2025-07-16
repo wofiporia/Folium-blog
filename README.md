@@ -1,6 +1,12 @@
 # Folium-茯苓的博客园
 
-一个前后端分离、功能完整、安全美观的极简个人博客项目。
+![首页](assests/Folium-Home.png)
+![登录页](assests/Folium-login.png)
+![管理面板](assests/Folium-panel.png)
+![管理面板2](assests/Folium-panel2.png)
+![博客测试页](assests/Folium-blogTest.png)
+
+一个采用前后端分离、功能完整、安全美观的极简个人博客项目。
 
 ---
 
@@ -17,23 +23,46 @@
 - 前端：Vue 3 + Vite + Vue Router + Axios + Marked
 - 后端：Spring Boot 3 + Spring Data JPA + MySQL + JWT (jjwt)
 
-## 启动方式
+## 一键部署（推荐 Docker Compose）
 
-### 后端
-1. 配置数据库连接（`backend/blog/src/main/resources/application.yml`）
-2. 在 `backend/blog` 目录下执行：
-   ```bash
-   mvn spring-boot:run
-   ```
-3. 确保数据库有管理员账号（如用户名 `wofiporia`，密码 `123456`）
+### 1. 克隆项目并进入目录
+```bash
+# 拉取代码
+ git clone https://github.com/你的用户名/Folium-blog.git
+ cd Folium-blog
+```
 
-### 前端
-1. 在 `frontend` 目录下执行：
+### 2. 启动所有服务（首次需耐心等待镜像和依赖下载）
+```bash
+# 构建并启动前后端和数据库
+sudo docker compose up --build -d
+```
+
+### 3. 初始化数据库管理员账号
+1. 进入数据库容器：
    ```bash
-   npm install
-   npm run dev
+   sudo docker exec -it folium-blog_db_1 mysql -u folium -p
+   # 密码 folium
    ```
-2. 访问 `http://localhost:5173` 查看博客首页
+2. 切换数据库并插入管理员：
+   ```sql
+   USE folium;
+   INSERT INTO admin (username, password) VALUES ('wofiporia', '123456');
+   ```
+   > 如有其他必填字段，请补全。
+
+### 4. 访问服务
+- 前端：http://你的云服务器IP
+- 后端：http://你的云服务器IP:8080
+
+### 5. 停止服务
+```bash
+sudo docker compose down
+```
+
+## Docker 镜像加速建议
+- 推荐配置阿里云、DaoCloud、腾讯云等国内加速器，否则首次拉取镜像和依赖会很慢。
+- Maven 依赖已内置阿里云源。
 
 ## 目录结构
 ```
@@ -68,3 +97,4 @@ wofiporia-blog/
 
 ## 下一步的计划
 - 增加带图片的 Markdown 博客显示功能（支持图片上传与展示）
+- 移动端布局适配
