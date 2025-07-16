@@ -1,10 +1,8 @@
 # Folium-茯苓的博客园
 
-![首页](assests/Folium-Home.png)
-![登录页](assests/Folium-login.png)
-![管理面板](assests/Folium-panel.png)
-![管理面板2](assests/Folium-panel2.png)
-![博客测试页](assests/Folium-blogTest.png)
+<p align="center">
+  <img src="assests/Folium-logo.png" alt="项目Logo" width="200" />
+</p>
 
 一个采用前后端分离、功能完整、安全美观的极简个人博客项目。
 
@@ -93,7 +91,15 @@ wofiporia-blog/
 
 ---
 
-如需二次开发或部署，建议先阅读源码，欢迎 star！
+## 项目页面展示
+
+![首页](assests/Folium-Home.png)
+![登录页](assests/Folium-login.png)
+![管理面板](assests/Folium-panel.png)
+![管理面板2](assests/Folium-panel2.png)
+![博客测试页](assests/Folium-blogTest.png)
+
+---
 
 ## 下一步的计划
 - 增加带图片的 Markdown 博客显示功能（支持图片上传与展示）
