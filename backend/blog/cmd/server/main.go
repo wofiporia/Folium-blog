@@ -39,7 +39,7 @@ func main() {
 	})
 	// health check
 	r.GET("/api/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"ok": true})
+		c.JSON(200, gin.H{"success": true})
 	})
 
 	// Register API routes

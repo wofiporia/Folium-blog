@@ -7,6 +7,7 @@ toolchain go1.24.5
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/pilu/fresh v0.0.0-20190826141211-0fa698d0172b
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gorm v1.31.0
 )

@@ -1,12 +1,12 @@
-# 第一阶段：构建 jar 包
-FROM maven:3.9.7-eclipse-temurin-21 AS build
+FROM golang:1.22-alpine AS build
 WORKDIR /app
 COPY . .
-RUN mvn clean package -DskipTests
+RUN go build -o server ./cmd/server
 
-# 第二阶段：运行 jar 包
-FROM eclipse-temurin:21-jre
+FROM alpine:3.20
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+COPY --from=build /app/server /app/server
+EXPOSE 8081
+ENTRYPOINT ["/app/server"]
+
+

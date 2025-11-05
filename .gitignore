@@ -1,15 +1,107 @@
 # Node/Vue 相关
 node_modules/
 dist/
+dist-ssr/
+*.local
 
-# Java/Maven 相关
-target/
+
+# Go 相关
+bin/
+*.exe
+*.test
+*.out
+
+# 日志文件
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # IDE 配置
 .idea/
 .vscode/
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# 其他
-.env 
+# 环境变量
+.env
+.env.local
+.env.development
+.env.production
+
+# 临时文件
+*.tmp
+*.temp
+
+# 系统文件
+Thumbs.db
+ehthumbs.db
+
+# 备份文件
+*.bak
+*.backup
+
+# 编译产物
+build/
+out/
+
+# Go 模块下载缓存
+go/pkg/
+
+# 前端特定忽略
+.cache/
+.parcel-cache/
+
+# Docker 忽略（如果存在）
+.dockerignore
+
+# Git 忽略
+.gitignore
+
+# 数据库文件（如果有本地开发数据库）
+*.db
+*.sqlite
+*.sqlite3
+
+# 缓存目录
+.cache/
+.parcel-cache/
+
+# 测试覆盖率报告
+coverage/
+.nyc_output/
+
+# 依赖锁定文件（建议保留，但这里列出以完整覆盖）
+# package-lock.json (通常应该保留)
+# yarn.lock (通常应该保留)
+# pnpm-lock.yaml (通常应该保留)
+
+# macOS 系统文件
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows 系统文件
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux 系统文件
+*~
+
+# 编辑器临时文件
+*~
+*.swp
+*.swo
+*#
+
+# 项目特定忽略
+# Docker 构建缓存
+.docker/
