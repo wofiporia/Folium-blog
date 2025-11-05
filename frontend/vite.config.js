@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080', // Spring Boot 后端端口
+        target: 'http://localhost:8081', // 后端端口
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, '/api'),
       },

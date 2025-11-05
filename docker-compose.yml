@@ -31,5 +31,15 @@ services:
       - backend
     restart: always
 
+  backend_new:
+    build: ./backendNew
+    ports:
+      - "8081:8081"
+    environment:
+      - APP_PORT=8081
+      - DB_DSN=folium:folium@tcp(db:3306)/folium?charset=utf8mb4&parseTime=True&loc=Local&allowPublicKeyRetrieval=true
+    depends_on:
+      - db
+    restart: always
 volumes:
   db_data: 

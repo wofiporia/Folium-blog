@@ -97,8 +97,14 @@ const editTitle = ref('')
 
 // 加载博客列表
 async function loadBlogs() {
-  const res = await getAllBlogs()
-  blogList.value = res.data
+  try {
+    const res = await getAllBlogs()
+    console.log('管理界面获取博客列表响应:', res)
+    blogList.value = res.data.data
+    console.log('管理界面博客列表:', blogList.value)
+  } catch (error) {
+    console.error('获取博客列表失败:', error)
+  }
 }
 
 onMounted(() => {
@@ -129,17 +135,45 @@ async function confirmUpload() {
     uploadMsg.value = '内容不能为空！'
     return
   }
+  
   let title = uploadTitle.value.trim()
   if (!title) {
     // 自动提取
     const titleMatch = markdownContent.value.match(/^#\s+(.+)$/m)
     title = titleMatch ? titleMatch[1] : '未命名博客'
   }
-  await addBlog(title, markdownContent.value)
-  uploadMsg.value = '上传成功！'
-  markdownContent.value = ''
-  uploadTitle.value = ''
-  loadBlogs()
+  
+  try {
+    await addBlog(title, markdownContent.value)
+    uploadMsg.value = '上传成功！'
+    markdownContent.value = ''
+    uploadTitle.value = ''
+    loadBlogs()
+  } catch (error) {
+    console.error('添加博客失败:', error)
+    let errorMessage = '添加博客失败'
+    
+    if (error.response) {
+      // 服务器返回了错误响应
+      if (error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message
+      } else if (error.response.status === 401) {
+        errorMessage = '登录已过期，请重新登录'
+        localStorage.removeItem('token')
+        router.push('/admin')
+        return
+      } else if (error.response.status === 403) {
+        errorMessage = '没有权限添加博客'
+      } else if (error.response.status >= 500) {
+        errorMessage = '服务器错误，请稍后重试'
+      }
+    } else if (error.request) {
+      // 网络错误
+      errorMessage = '网络连接失败，请检查网络'
+    }
+    
+    uploadMsg.value = errorMessage
+  }
 }
 
 // 管理Tab
@@ -151,9 +185,34 @@ function editBlog(blog) {
 }
 async function saveEdit() {
   if (editingBlog) {
-    await updateBlog(editingBlog.id, editTitle.value, editContent.value)
-    showEditModal.value = false
-    loadBlogs()
+    try {
+      await updateBlog(editingBlog.id, editTitle.value, editContent.value)
+      showEditModal.value = false
+      loadBlogs()
+      alert('博客更新成功！')
+    } catch (error) {
+      console.error('更新博客失败:', error)
+      let errorMessage = '更新博客失败'
+      
+      if (error.response) {
+        // 服务器返回了错误响应
+        if (error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response.status === 401) {
+          errorMessage = '登录已过期，请重新登录'
+          localStorage.removeItem('token')
+          router.push('/admin')
+          return
+        } else if (error.response.status >= 500) {
+          errorMessage = '服务器错误，请稍后重试'
+        }
+      } else if (error.request) {
+        // 网络错误
+        errorMessage = '网络连接失败，请检查网络'
+      }
+      
+      alert(errorMessage)
+    }
   }
 }
 function deleteBlogConfirm(blog) {
@@ -162,9 +221,39 @@ function deleteBlogConfirm(blog) {
 }
 async function confirmDelete() {
   if (deletingBlog) {
-    await deleteBlog(deletingBlog.id)
-    showDeleteModal.value = false
-    loadBlogs()
+    try {
+      await deleteBlog(deletingBlog.id)
+      showDeleteModal.value = false
+      loadBlogs()
+      alert('博客删除成功！')
+    } catch (error) {
+      console.error('删除博客失败:', error)
+      let errorMessage = '删除博客失败'
+      
+      if (error.response) {
+        // 服务器返回了错误响应
+        if (error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response.status === 401) {
+          errorMessage = '登录已过期，请重新登录'
+          localStorage.removeItem('token')
+          router.push('/admin')
+          return
+        } else if (error.response.status === 403) {
+          errorMessage = '没有权限删除此博客'
+        } else if (error.response.status === 404) {
+          errorMessage = '博客不存在或已被删除'
+        } else if (error.response.status >= 500) {
+          errorMessage = '服务器错误，请稍后重试'
+        }
+      } else if (error.request) {
+        // 网络错误
+        errorMessage = '网络连接失败，请检查网络'
+      }
+      
+      alert(errorMessage)
+      // 删除失败时不关闭模态框，让用户可以重试
+    }
   }
 }
 

@@ -39,9 +39,16 @@ const router = useRouter()
 onMounted(async () => {
   document.title = 'Folium-茯苓的博客园'
   loading.value = true
-  const res = await getAllBlogs()
-  blogs.value = res.data
-  loading.value = false
+  try {
+    const res = await getAllBlogs()
+    console.log('获取博客列表响应:', res)
+    blogs.value = res.data.data // 修正：使用res.data.data而不是res.data
+    console.log('博客列表:', blogs.value)
+  } catch (error) {
+    console.error('获取博客列表失败:', error)
+  } finally {
+    loading.value = false
+  }
 })
 
 function goToDetail(id) {

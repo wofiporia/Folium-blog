@@ -29,11 +29,13 @@ const loading = ref(true)
 onMounted(async () => {
   loading.value = true
   const res = await getBlog(blogId)
-  const blog = res.data
+  console.log('博客详情响应:', res)
+  const blog = res.data.data
   blogContent.value = blog.content
   blogTitle.value = blog.title
   blogUploadDate.value = blog.uploadDate ? blog.uploadDate.replace('T', ' ').slice(0, 19) : ''
   blogUpdateDate.value = blog.updateDate ? blog.updateDate.replace('T', ' ').slice(0, 19) : ''
+  console.log('博客详情数据:', blog)
   loading.value = false
   document.title = blogTitle.value ? `Folium-茯苓的博客园 - ${blogTitle.value}` : 'Folium-茯苓的博客园'
 })

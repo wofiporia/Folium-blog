@@ -39,13 +39,25 @@ async function handleLogin() {
       password: password.value
     })
     if (res.data.success) {
-      localStorage.setItem('token', res.data.token)
+      // 后端返回的token已经包含"Bearer "前缀，我们只存储实际的token部分
+      const token = res.data.data.token
+      const actualToken = token.startsWith('Bearer ') ? token.substring(7) : token
+      localStorage.setItem('token', actualToken)
       router.push('/admin/panel')
     } else {
       error.value = res.data.message || '账号或密码错误'
     }
   } catch (e) {
-    error.value = '登录失败，请检查网络或服务器！'
+    // 检查是否是HTTP错误响应
+    if (e.response && e.response.data && e.response.data.message) {
+      error.value = e.response.data.message
+    } else if (e.response && e.response.status === 401) {
+      error.value = '用户名或密码错误'
+    } else if (e.response && e.response.status >= 500) {
+      error.value = '服务器错误，请稍后重试'
+    } else {
+      error.value = '登录失败，请检查网络连接'
+    }
   }
 }
 
