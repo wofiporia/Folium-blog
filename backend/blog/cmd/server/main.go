@@ -2,19 +2,17 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/wofiporia/folium-backend-new/internal/config"
 	dbPkg "github.com/wofiporia/folium-backend-new/internal/db"
 	handlerPkg "github.com/wofiporia/folium-backend-new/internal/handler"
 	"github.com/wofiporia/folium-backend-new/internal/middleware"
 )
 
 func main() {
-	port := os.Getenv("APP_PORT")
-	if port == "" {
-		port = "8081"
-	}
+	// 加载配置
+	cfg := config.LoadConfig()
 
 	// init DB (safe even if DSN not provided; you can skip if only health used)
 	dbPkg.Init()
@@ -39,7 +37,7 @@ func main() {
 	})
 	// health check
 	r.GET("/api/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"success": true})
+		c.JSON(200, gin.H{"ok": true})
 	})
 
 	// Register API routes
@@ -63,8 +61,8 @@ func main() {
 		// 这里可以添加一些可选认证的路由
 	}
 
-	log.Println("backendNew listening on :" + port)
-	if err := r.Run(":" + port); err != nil {
+	log.Println("backendNew listening on :" + cfg.AppPort)
+	if err := r.Run(":" + cfg.AppPort); err != nil {
 		log.Fatal(err)
 	}
 }

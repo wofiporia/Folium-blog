@@ -1,110 +1,110 @@
 # Folium-茯苓的博客园
 
-<p align="center">
-  <img src="assests/Folium-logo.png" alt="项目Logo" width="200" />
-</p>
+## 项目简介
 
-一个采用前后端分离、功能完整、安全美观的极简个人博客项目。
+Folium博客是一个基于Go语言和Vue.js构建的前后端分离个人博客系统。
 
----
+## 功能特性
 
-## 功能简介
-- 博客首页展示所有文章，支持点击查看详情
-- 博客详情页支持 Markdown 渲染，显示创建/更新时间
-- 管理员登录（JWT 安全认证，账号密码存数据库）
-- 后台支持博客的上传、编辑、删除
-- 管理员入口、退出登录、路由守卫、token 自动校验
-- 支持“加载中”提示、错误提示，体验流畅
-- 首页右上角有管理员入口，左上角有 GitHub 主页链接
+- 博客列表展示
+- 博客详情查看（支持Markdown渲染）
+- 管理员登录认证（JWT）
+- 博客增删改操作
+- 响应式界面设计
 
 ## 技术栈
-- 前端：Vue 3 + Vite + Vue Router + Axios + Marked
-- 后端：Spring Boot 3 + Spring Data JPA + MySQL + JWT (jjwt)
 
-## 一键部署（推荐 Docker Compose）
+### 前端
+- Vue 3
+- Vite
+- Vue Router
+- Axios
+- Marked
 
-### 1. 克隆项目并进入目录
+### 后端
+- Go 1.24
+- Gin框架
+- GORM
+- MySQL
+- JWT认证
+
+### 基础设施
+- Docker
+- Docker Compose
+- Nginx
+
+## 快速开始
+
+### 环境要求
+- Docker
+- Docker Compose
+
+### 部署步骤
+
+1. 克隆项目
 ```bash
-# 拉取代码
- git clone https://github.com/你的用户名/Folium-blog.git
- cd Folium-blog
+git clone https://github.com/你的用户名/Folium-blog.git
+cd Folium-blog
 ```
 
-### 2. 启动所有服务（首次需耐心等待镜像和依赖下载）
+2. 启动服务
 ```bash
-# 构建并启动前后端和数据库
-sudo docker compose up --build -d
+docker compose up --build -d
 ```
 
-### 3. 初始化数据库管理员账号
-1. 进入数据库容器：
-   ```bash
-   sudo docker exec -it folium-blog_db_1 mysql -u folium -p
-   # 密码 folium
-   ```
-2. 切换数据库并插入管理员：
-   ```sql
-   USE folium;
-   INSERT INTO admin (username, password) VALUES ('wofiporia', '123456');
-   ```
-   > 如有其他必填字段，请补全。
+3. 等待服务启动完成
 
-### 4. 访问服务
-- 前端：http://你的云服务器IP
-- 后端：http://你的云服务器IP:8080
+4. 访问应用
 
-### 5. 停止服务
+
+### 服务端口
+- 前端：5713端口
+- 后端：8081端口
+
+### 停止服务
 ```bash
-sudo docker compose down
+docker compose down
 ```
 
-## Docker 镜像加速建议
-- 推荐配置阿里云、DaoCloud、腾讯云等国内加速器，否则首次拉取镜像和依赖会很慢。
-- Maven 依赖已内置阿里云源。
+## 项目结构
 
-## 目录结构
 ```
-wofiporia-blog/
-  backend/
-    blog/
-      src/main/java/com/wofiporia/blog/...
-      src/main/resources/application.yml
-      pom.xml
-  frontend/
-    src/
-      views/
-      api/
-      router/
-      ...
-    package.json
-    vite.config.js
-  README.md
+Folium-blog/
+├── backend/blog/          # Go后端
+├── frontend/             # Vue前端
+├── docker-compose.yml
+└── README.md
 ```
 
-## 开发环境
-- Node.js 18+
-- npm 9+ 或 yarn 1+
-- JDK 17+（建议 21）
-- Maven 3.8+
-- MySQL 8+
-- 推荐编辑器：VS Code / IntelliJ IDEA
+## 开发指南
 
----
+### 前端开发
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## 项目页面展示
+### 后端开发
+```bash
+cd backend/blog
+# 安装依赖
+go mod tidy
+# 启动服务（使用热重载）
+fresh
+# 或直接运行
+go run cmd/server/main.go
+```
 
-![首页](assests/Folium-Home.png)
-![登录页](assests/Folium-login.png)
-![管理面板](assests/Folium-panel.png)
-![管理面板2](assests/Folium-panel2.png)
-![博客测试页](assests/Folium-blogTest.png)
+### 数据库
+项目使用MySQL数据库，连接信息：
+- 主机：db
+- 端口：3306
+- 数据库：folium
+- 用户名：folium
+- 密码：folium
 
----
+## 注意事项
 
-## 在线演示
-
-项目已部署上线，欢迎访问：[http://foliumblog.top](http://foliumblog.top)
-
-## 下一步的计划
-- 增加带图片的 Markdown 博客显示功能（支持图片上传与展示）
-- 移动端布局适配
+- 首次部署需要等待镜像和依赖下载完成
+- 建议配置国内镜像源加速下载

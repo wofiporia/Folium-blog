@@ -1,9 +1,11 @@
 package db
 
 import (
+	"fmt"
 	"log"
 	"os"
 
+	"github.com/wofiporia/folium-backend-new/internal/config"
 	"github.com/wofiporia/folium-backend-new/internal/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -12,12 +14,14 @@ import (
 var DB *gorm.DB
 
 func Init() {
+	// 1) 优先使用完整 DSN（便于一次性覆盖）
 	dsn := os.Getenv("DB_DSN")
 	if dsn == "" {
-		// 本地直跑默认连本机 MySQL（root/123456），数据库名 blog
-		// Java 驱动使用 allowPublicKeyRetrieval，Go 驱动不支持该参数；
-		// 若遇到认证问题，可为用户启用 mysql_native_password 或设置 allowNativePasswords=true。
-		dsn = "root:123456@tcp(127.0.0.1:3306)/blog?charset=utf8mb4&parseTime=True&loc=Local&allowNativePasswords=true"
+		// 2) 使用分段变量（来自根 .env/.env.local），由 config 统一管理
+		cfg := config.LoadConfig()
+		dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&allowNativePasswords=true",
+			cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName,
+		)
 	}
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
