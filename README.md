@@ -103,8 +103,6 @@ wofiporia-blog/
 
 ## 在线演示
 
-项目已部署上线，欢迎访问：[http://foliumblog.top](http://foliumblog.top)
+重构中......
 
-## 下一步的计划
-- 增加带图片的 Markdown 博客显示功能（支持图片上传与展示）
-- 移动端布局适配
+
